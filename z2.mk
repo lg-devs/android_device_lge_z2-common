@@ -53,6 +53,10 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp \
     persist.sys.isUsbOtgEnabled=true
 
+# QC RIL
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+	rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
+
 # Screen density
 PRODUCT_AAPT_CONFIG := normal hdpi xhdpi xxhdpi
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
@@ -83,11 +87,16 @@ PRODUCT_PACKAGES += \
 # Audio configuration
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio_platform_info.xml:system/etc/audio_platform_info.xml \
-    $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf
+    $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
+    $(LOCAL_PATH)/configs/mixer_paths.xml:system/etc/mixer_paths.xml
 
 # Bluetooth
 PRODUCT_PACKAGES += \
     bdAddrLoader
+
+# Wifi
+PRODUCT_PACKAGES += \
+    hostapd_default.conf
 
 # Camera
 PRODUCT_PACKAGES += \
@@ -108,6 +117,17 @@ PRODUCT_PACKAGES += \
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8994
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gps.conf:system/etc/gps.conf \
+    $(LOCAL_PATH)/configs/flp.conf:system/etc/flp.conf \
+    $(LOCAL_PATH)/configs/izat.conf:system/etc/izat.conf \
+    $(LOCAL_PATH)/configs/sap.conf:system/etc/sap.conf \
+    $(LOCAL_PATH)/configs/msap.conf:system/etc/msap.conf
+
+# Thermal
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/thermal-engine-8994.conf:system/etc/thermal-engine-8994.conf
 
 # IRSC
 PRODUCT_COPY_FILES += \
@@ -136,7 +156,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
     NfcNci \
-    Tag
+    Tag \
+    NfcNci \
+    nfc_nci.pn54x.default
+
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml
 
 # OMX
 PRODUCT_PACKAGES += \
@@ -161,13 +186,13 @@ PRODUCT_BOOT_JARS += \
 PRODUCT_PACKAGES += \
     power.msm8994
 
-# Torch
+# Ramdisk
 PRODUCT_PACKAGES += \
-    Torch
+    fstab.z2 \
+    ueventd.z2.rc
+#    init.z2.rc \
+#    init.z2.usb.rc \
 
 # USB
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
-
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
