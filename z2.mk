@@ -123,11 +123,14 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/flp.conf:system/etc/flp.conf \
     $(LOCAL_PATH)/configs/izat.conf:system/etc/izat.conf \
     $(LOCAL_PATH)/configs/sap.conf:system/etc/sap.conf \
-    $(LOCAL_PATH)/configs/msap.conf:system/etc/msap.conf
+    $(LOCAL_PATH)/configs/msap.conf:system/etc/msap.conf \
+    $(LOCAL_PATH)/configs/lowi.conf:system/etc/lowi.conf \
+    $(LOCAL_PATH)/configs/quipc.conf:system/etc/quipc.conf
 
 # Thermal
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/thermal-engine-8994.conf:system/etc/thermal-engine-8994.conf
+    $(LOCAL_PATH)/configs/thermal-engine-8994.conf:system/etc/thermal-engine-8994.conf \
+    $(LOCAL_PATH)/configs/thermal-engine-default.conf:system/etc/thermal-engine-default.conf
 
 # IRSC
 PRODUCT_COPY_FILES += \
@@ -140,6 +143,15 @@ PRODUCT_PACKAGES += \
 # Lights
 PRODUCT_PACKAGES += \
     lights.msm8994
+
+# XTWiFi
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/xtwifi.conf:system/etc/xtwifi.conf
+
+# Sensors
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sensors/sensor_def_common.conf:system/etc/sensors/sensor_def_common.conf \
+    $(LOCAL_PATH)/configs/sensors/sensor_def_variable.conf:system/etc/sensors/sensor_def_variable.conf
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -159,6 +171,10 @@ PRODUCT_PACKAGES += \
     Tag \
     NfcNci \
     nfc_nci.pn54x.default
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
+    $(LOCAL_PATH)/configs/libnfc-nxp.conf:system/etc/libnfc-nxp.conf
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml
