@@ -1,0 +1,25 @@
+# LGE IMS Features - To interwork with QMI WMS (64-bit exe/lib)
+service imswmsproxy /system/bin/imswmsproxy
+    class main
+    user system
+    group radio system net_admin net_raw
+
+#2014.12.10 LGE_CHANGE_S kyeongsu.jang@lge.com KT Smart DM Enable
+on init
+    setprop ril.kt.smart.dm.enable 0
+
+on property:ril.kt.smart.dm.enable=1
+    chmod 666 /dev/diag_lge
+
+on property:ril.kt.smart.dm.enable=0
+    chmod 660 /dev/diag_lge
+#2014.12.10 LGE_CHANGE_E kyeongsu.jang@lge.com KT Smart DM Enable
+
+#20150123 performace tuning
+    write /proc/sys/net/ipv4/tcp_adv_win_scale 1
+
+on post-fs-data
+# NFC local data and nfcee xml storage
+    mkdir /data/nfc 0770 nfc nfc
+    mkdir /data/nfc/param 0770 nfc nfc
+

@@ -1,0 +1,4 @@
+import /init.qcom.rc
+import /init.lge.log.rc
+import /init.target.rc
+import /init.betaz_core.rc

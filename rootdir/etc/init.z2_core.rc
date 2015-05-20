@@ -1,0 +1,210 @@
+# Copyright (c) 2009-2012, Code Aurora Forum. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of Code Aurora nor
+#       the names of its contributors may be used to endorse or promote
+#       products derived from this software without specific prior written
+#       permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+import /init.z2_product.rc
+
+# Bluetooth configuration
+import /init.betaz.bt_vendor.rc
+
+# FM Framework
+import /init.betaz.fm_vendor.rc
+
+# modem logging (LGODM)
+import /init.lge.modem_log.rc
+
+# import init script for zram, which is a subset of project Svelte.
+import /init.lge.svelte.rc
+
+# audio configuration
+import /init.lge.audio.rc
+
+# 2012.08.24 real-wifi@lge.com[wo0gi] TestMode Daemon for broadcom driver [START]
+service diagd /system/bin/diagd 
+    class late_start
+    user root
+    group radio system
+    disabled
+    oneshot
+    socket lsock_diagd stream 666
+
+on property:wifi_ftm.diagd_start=1
+    start diagd
+
+on property:wifi_ftm.diagd_start=0
+    stop diagd
+# 2012.08.24 real-wifi@lge.com[wo0gi] TestMode Daemon for broadcom driver [END]
+
+#[START][LGE_WIFI][CT][hayun.kim@lge.com] : [SPEC] PPPOE Feature
+service pppoe_extd /system/bin/pppoe_extd
+    user root
+    group system radio
+    disabled
+    oneshot
+
+service dhcp6cDNS_wlan0 /system/bin/dhcp6c -c "/etc/wide-dhcpv6/dhcp6cDNS.conf" -Df wlan0
+    disabled
+    oneshot
+
+service dhcp6c_wlan0 /system/bin/dhcp6c -c "/etc/wide-dhcpv6/dhcp6c.conf" -Df wlan0
+    disabled
+    oneshot
+#[END][LGE_WIFI][CT][hayun.kim@lge.com] : [SPEC] PPPOE Feature
+
+service atd /system/bin/atd /dev/ttyGS0 /dev/smd0
+    socket atd stream 0660 system inet
+    class main
+
+on boot
+    mkdir /data/nfc 0770 nfc nfc
+    mkdir /data/nfc/param 0770 nfc nfc
+    write /sys/module/lowmemorykiller/parameters/lmk_fast_run 0
+    # emotional led
+    chown system system /sys/devices/virtual/lg_rgb_led/use_patterns/blink_patterns
+    chmod 0644 /sys/devices/virtual/lg_rgb_led/use_patterns/blink_patterns
+    chown system system /sys/devices/virtual/lg_rgb_led/use_patterns/input_patterns
+    chmod 0644 /sys/devices/virtual/lg_rgb_led/use_patterns/input_patterns
+    chown system system /sys/devices/virtual/lg_rgb_led/use_patterns/onoff_patterns
+    chmod 0644 /sys/devices/virtual/lg_rgb_led/use_patterns/onoff_patterns
+    chown system system /sys/devices/virtual/lg_rgb_led/use_patterns/setting
+    chmod 0644 /sys/devices/virtual/lg_rgb_led/use_patterns/setting
+    write /sys/devices/virtual/lg_rgb_led/use_patterns/setting 1
+
+	# START touch_driver
+	chown system system /sys/devices/virtual/input/lge_touch/incoming_call
+	chown system system /sys/devices/virtual/input/lge_touch/ime_status
+	chown system lgkeyguard /sys/devices/virtual/input/lge_touch/keyguard
+	chmod 664 /sys/devices/virtual/input/lge_touch/keyguard
+	chown system system /sys/devices/virtual/input/lge_touch/ts_noise_log_enable
+	chmod 664 /sys/devices/virtual/input/lge_touch/ts_noise_log_enable
+	chown system system /sys/devices/virtual/input/lge_touch/ts_noise
+	chmod 664 /sys/devices/virtual/input/lge_touch/ts_noise
+	chown system system /sys/devices/virtual/input/lge_touch/sensing_test
+	chmod 664 /sys/devices/virtual/input/lge_touch/sensing_test
+	# END touch_driver
+
+	# START touch_knock_on
+	chown system system /sys/devices/virtual/input/lge_touch/lpwg_data
+	chmod 664 /sys/devices/virtual/input/lge_touch/lpwg_data
+	chown system system /sys/devices/virtual/input/lge_touch/lpwg_notify
+	chmod 664 /sys/devices/virtual/input/lge_touch/lpwg_notify
+	chown system system /sys/devices/virtual/input/lge_touch/lpwg_test_info
+	chmod 644 /sys/devices/virtual/input/lge_touch/lpwg_test_info
+	chown system system /sys/devices/virtual/input/lge_touch/lpwg_test_ctrl
+	chmod 644 /sys/devices/virtual/input/lge_touch/lpwg_test_ctrl
+	chown system system /sys/devices/virtual/input/lge_touch/touch_wake_up_test
+	chmod 664 /sys/devices/virtual/input/lge_touch/touch_wake_up_test
+	chown system system /sys/devices/virtual/input/lge_touch/quick_cover_status
+	chmod 664 /sys/devices/virtual/input/lge_touch/quick_cover_status
+	# END touch_knock_on
+
+# Begin LG Volume vibrator
+    chown system system /sys/class/timed_output/vibrator/amp
+    chmod 664 /sys/class/timed_output/vibrator/amp
+# End LG Volume vibrator
+
+    # Start Power_BSP DGPC
+    chown system system /sys/class/graphics/fb0/mdp/vfps
+    chmod 664 /sys/class/graphics/fb0/mdp/vfps
+    chown system system /sys/class/graphics/fb0/mdp/vfps_fcnt
+    chmod 664 /sys/class/graphics/fb0/mdp/vfps_fcnt
+    chown system system /sys/class/graphics/fb0/mdp/vfps_ratio
+    chmod 664 /sys/class/graphics/fb0/mdp/vfps_ratio
+    chown system system /sys/class/devfreq/g3-display.0/available_frequencies
+    chmod 664 /sys/class/devfreq/g3-display.0/available_frequencies
+    chown system system /sys/class/devfreq/g3-display.0/cur_freq
+    chmod 664 /sys/class/devfreq/g3-display.0/cur_freq
+    chown system system /sys/class/devfreq/g3-display.0/polling_interval
+    chmod 664 /sys/class/devfreq/g3-display.0/polling_interval
+    chown system system /sys/class/kgsl/kgsl-3d0/gpu_pwr_state
+    chmod 444 /sys/class/kgsl/kgsl-3d0/gpu_pwr_state
+    # END LG DGPC
+
+        lge_chcon_recursive /data/property u:object_r:property_data_file:s0
+        lge_chcon_recursive /data/security u:object_r:security_file:s0
+        start chcon_keystore
+
+# Broadcast Service[START] [seongeun.jin@lge.com]
+service broadcast /system/bin/libbroadcast_server
+    class main
+    user media
+    group system audio media graphics sdcard_rw
+
+# BSP Display img tuning for POLED [START]
+service lge-z-img-tune /system/bin/sh /init.lge.display.oled.sh
+    class main
+    user root
+    oneshot
+# BSP Display img tuning for POLED [END]
+
+service chcon_keystore /system/bin/sh /system/etc/init.z2_chcon_keystore.sh
+  disabled
+  oneshot
+  seclabel u:r:keystore:s0
+
+on property:init.svc.media=restarting
+    restart broadcast
+# Broadcast Service[END]  [seongeun.jin@lge.com]
+
+service rctd /system/bin/rctd
+    class late_start
+    user root
+    group root
+
+service gbmonitor /system/bin/gbmonitor
+    class main
+    socket gbm-client stream 660 system system
+    user system
+    group system
+
+#LGE_CHANGE_S, restart qcamerasvr when restarting mediaserver and servicemanager, yousung.kang@lge.com
+on property:init.svc.media=restarting
+    restart qcamerasvr
+on property:init.svc.servicemanager=restarting
+    restart qcamerasvr
+#LGE_CHANGE_E, restart qcamerasvr when restarting mediaserver and servicemanager, yousung.kang@lge.com
+
+# FEATURE_SDCARD_ENCRYPTION
+on init
+    setprop ro.ssbd.session /dev/block/platform/f9824900.sdhci/by-name/eksst
+    setprop ro.ssbd.offset 0
+
+service bnrd /system/bin/bnrd
+    class main
+    socket bnrd stream 660 root system
+    user root
+    group system radio sdcard_rw
+
+service write_event_log /system/bin/write_event_log 55000
+    user system
+    group system
+    disabled
+    oneshot
+
+on property:init.svc.bootanim=stopped
+    start write_event_log
+#choonmin.lee@lge.com enable slimport cbl isr
+    write /sys/class/i2c-dev/i2c-5/device/5-0072/enable_irq 1
