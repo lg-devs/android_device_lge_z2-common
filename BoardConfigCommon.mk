@@ -43,7 +43,7 @@ TARGET_NO_BOOTLOADER := true
 
 # Kernel
 BOARD_CUSTOM_BOOTIMG := true
-BOARD_CUSTOM_BOOTIMG_MK := $(LOCAL_PATH)/releasetools/mkbootimg.mk
+BOARD_CUSTOM_BOOTIMG_MK := $(LOCAL_PATH)/mkbootimg.mk
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=z2 user_debug=31 msm_rtb.filter=0x0
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 2048
@@ -91,9 +91,6 @@ BOARD_NFC_CHIPSET := pn547
 # Camera
 USE_DEVICE_SPECIFIC_CAMERA := true
 COMMON_GLOBAL_CFLAGS += -DLG_CAMERA_HARDWARE
-
-# CMHW
-BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/cmhw/
 
 # Display
 BOARD_EGL_CFG := $(LOCAL_PATH)/configs/egl.cfg
